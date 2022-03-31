@@ -1,5 +1,13 @@
+const main = document.querySelector('main');
+const modal = document.getElementById("modal");
+const link = document.getElementById("linkAbrirModal");
+const edits = document.querySelectorAll("section > a");
+const search = document.getElementById('search');
+const cancelButton = document.querySelector('#modal button.link');
+const inputParaFocus = document.querySelector('#modal input[name="nome"]')
+
 // Simulando os contatos em uma variável
-let contatos = [
+const contatos = [
     {
         "id":1,
         "nome":"Kakashi Hatake",
@@ -42,56 +50,63 @@ let contatos = [
         "emails":["choji@akimichis.com"],
         "telefones":["99999-7777","98888-8888"]
     }
-]
+];
 
-// Função que mostra todos os contatos
-let showContatos = (contatos) => {
+const mostrarModal = () => {
+    modal.style.display = "flex";
+    modal.style.opacity = 1;
+    inputParaFocus.focus()
+};
 
-    // Fazer um for percorrendo esse contatos
-    contatos.forEach(
-        c => {
-            // Criar um elemento section
-            let section = document.createElement('section');
+const esconderModal = (e) => {
+    e.bubbles = false;
+    modal.style.display = "none"
+    modal.style.opacity = 0;
+};
 
-            // Criar o códio HTML dos emails
-            let htmlDosEmails = '';
-            c.emails.forEach(
-                e => {
-                    htmlDosEmails += `<a href="mailto:${e}">${e}</a>`
-                }
-            );
+const showContatos = contatos => {
+    main.innerHTML = '';
+    contatos.forEach(c => {
+        const section = document.createElement('section');
 
-            // Criar o código html dos telefones
-            let htmlDosTels = '';
-            c.telefones.forEach(
-                t => {
-                    htmlDosTels += `<li><a href="tel:${t}">${t}</a></li>`
-                }
-            );  
+        let htmlEmails = '';
+        c.emails.forEach(e => {
+            htmlEmails += `<a href="mailto:${e}">${e}</a>`;
+        });
 
-            // Criar o código HTML que será conteúdo da section;
-            let html = `
-                <h3>${c.nome}</h3>
-                <div>
-                    ${htmlDosEmails}
-                </div>
-                <ul>
-                    ${htmlDosTels}
-                </ul>
-                <a href="#">Editar</a>
-            `;
+        let htmlTels = '';
+        c.telefones.forEach(t => {
+            htmlTels += `<li><a href="tel:${t}">${t}</a></li>`;
+        });
 
-            // Adicionar o código HTML ao elemento section
-            section.innerHTML = html;
+        const html = `
+            <h3>${c.nome}</h3>
+            <div>
+                ${htmlEmails}
+            </div>
+            <ul>
+                ${htmlTels}
+            </ul>
+            <a href="#">Editar</a>
+        `;
 
-            // Adicionando a section do contato no main
-            // Capturar main (querySelector)
-            let main = document.querySelector("main");
+        section.innerHTML = html;
 
-            // Adicionar a section ao main
-            main.appendChild(section);     
-        }
-    )
-}
+        main.appendChild(section);
+    });
+};
+
+const buscaContatos = trecho => {
+    const contatosFiltrados = contatos.filter(
+        c => c.nome.toUpperCase().includes(trecho.toUpperCase())
+    );
+
+    showContatos(contatosFiltrados);
+};
 
 showContatos(contatos);
+
+search.addEventListener('keyup', (e) => buscaContatos(e.target.value));
+link.addEventListener('click', mostrarModal);
+cancelButton.addEventListener('click', esconderModal);
+modal.addEventListener('keyup', e => e.key === 'Escape' ? esconderModal(e) : null);
