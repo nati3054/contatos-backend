@@ -1,4 +1,5 @@
 const {sequelize} = require('../database/models');
+const bcrypt = require('bcrypt');
 
 const AuthController = {
     login: async (req, res) => {
@@ -12,18 +13,23 @@ const AuthController = {
 
         // Caso não haja usuário, retornar erro 403
         if(resultados.length == 0){
-            return res.status(403).json({msg:"Falha no login"})
-        } else {
-            return res.status(200).json({msg:"Encontrou usuário com email dado"})
+            return res.status(403).json({msg:"Falha no login"});
         }
 
+        // Capturar o id e a senha criptografada, levantados do BD
+        let id = resultados[0].id; 
+        let senhaCriptografada = resultados[0].senha;
+
         // Testar a senha do usuário.
-        // Se senha não estiver ok, retornar erro 403
+        if(!bcrypt.compareSync(senha, senhaCriptografada)) {
+            // Se senha não estiver ok, retornar erro 403
+            return res.status(403).json({msg:"Falha no login"});
+        }
 
         // TODO: Criar o token
 
         // TODO: Retornar msg de sucesso (200) e o token
-
+        return res.status(200).json({msg:"Dados de login verificados com sucesso!"});
     }
 }
 
