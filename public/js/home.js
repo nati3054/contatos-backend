@@ -1,3 +1,8 @@
+const loginContainer = document.getElementById("login-container");
+const appContainer = document.getElementById("app-container");
+const formLogin = document.querySelector('#login-container > form');
+const emailLogin = document.querySelector('#email');
+const senhaLogin = document.querySelector('#senha');
 const main = document.querySelector('main');
 const modal = document.getElementById("modal");
 const link = document.getElementById("linkAbrirModal");
@@ -66,9 +71,42 @@ const carregaContatos =  async ()=> {
 
 }
 
-carregaContatos();
+const login = async dadosDeLogin =>{
+    
+    let response = await fetch(
+        '/login',
+        {
+            method:"POST",
+            body: JSON.stringify(dadosDeLogin),
+            headers: {
+                "content-type":"application/json"
+            }
+        }
+    );
+    let resultado = await response.json();
+    console.log(dadosDeLogin)
+    console(resultado);
+
+}
 
 search.addEventListener('keyup', (e) => buscaContatos(e.target.value));
 link.addEventListener('click', mostrarModal);
 cancelButton.addEventListener('click', esconderModal);
 modal.addEventListener('keyup', e => e.key === 'Escape' ? esconderModal(e) : null);
+formLogin.addEventListener(
+    'submit',
+    e => {
+        // Interromper o comportamento padrão do evento;
+        e.preventDefault();
+        
+        // Ler os dados de login
+        let dadosDeLogin = {
+            email: emailLogin.value,
+            senha: senhaLogin.value
+        }
+
+        // Chamar uma função para fazer o login
+        login(dadosDeLogin);
+
+    }
+);
