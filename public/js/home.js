@@ -65,7 +65,18 @@ const buscaContatos = trecho => {
 
 const carregaContatos =  async ()=> {
 
-    let resposta = await fetch('/contatos');
+    // Carregando token do sessionStorage
+    let token = sessionStorage.getItem('token');
+
+    let resposta = await fetch(
+        '/contatos',
+        {
+            method: "GET",
+            headers: {
+                authorization: `bearer ${token}`
+            }
+        }
+    );
     let contatos = await resposta.json();
     showContatos(contatos);
 
@@ -83,9 +94,33 @@ const login = async dadosDeLogin =>{
             }
         }
     );
-    let resultado = await response.json();
-    console.log(dadosDeLogin)
-    console(resultado);
+
+    // Verificando se o login obteve sucesso...
+    if(response.status == 403){
+        
+        alert("Login Inválido");
+        return;
+
+    } else if(response.status == 200){
+
+        // Acessar o conteúdo da reponse
+        let dados = await response.json();
+
+        // Salvar o token
+        sessionStorage.setItem('token', dados.token);
+
+        // Mostrar o app container container e esconder o login;
+        appContainer.style.display = "block";
+        loginContainer.style.display = "none";
+
+        // Carregar os contatos
+        carregaContatos();
+
+    } else {
+
+        alert(`Erro inesperado. Entre em contato com o suporte.\n${response.statusText}`);
+
+    }
 
 }
 

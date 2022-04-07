@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+// Importar os middlewares
+const validaToken = require('../middlewares/validaToken');
+
 const ContatosController = require('../controllers/ContatosController');
 
 /**
@@ -12,7 +15,7 @@ Deletar um contato                           | DELETE  | /contatos/:id
 Alterar um contato                           | UPDATE  | /contatos/:id
 */
 
-router.get('/', ContatosController.index);
+router.get('/', validaToken, ContatosController.index);
 router.get('/search', ContatosController.search);
 router.get('/:id', ContatosController.show);
 router.post('/', ContatosController.create);

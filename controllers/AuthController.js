@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const AuthController = {
     login: async (req, res) => {
-
+        
         // Capturar o email e a senha
         let {email, senha} = req.body;
 
@@ -34,14 +34,14 @@ const AuthController = {
             nome,
             email
         }
-
+       
         // Criar o token
         let token = jwt.sign(usuario, "SEGREDO");
 
+        
         // Retornar msg de sucesso (200) e o token
         return res.status(200).json({token, usuario});
 
     }
 }
-
 module.exports = AuthController;
